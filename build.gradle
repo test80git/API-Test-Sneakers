@@ -1,12 +1,10 @@
 plugins {
     id 'java'
-    id 'org.springframework.boot' version '4.0.4'
-    id 'io.spring.dependency-management' version '1.1.7'
+    id 'io.qameta.allure' version "$allurePlugin"
 }
 
-group = 'ru.kuz'
-version = '0.0.1-SNAPSHOT'
-description = 'AutoTestForSneakerStore'
+group = 'ru.sneakerstore'
+version = '1.0.0'
 
 java {
     toolchain {
@@ -14,16 +12,65 @@ java {
     }
 }
 
+allure {
+    version = "$allureVersion"
+    autoconfigure = true
+    aspectjweaver = true
+    useJUnit5 {
+        version = "$allureVersion"
+    }
+}
+
+compileJava {
+    options.encoding = 'UTF-8'
+}
+
+compileTestJava {
+    options.encoding = 'UTF-8'
+}
+
 repositories {
     mavenCentral()
 }
 
 dependencies {
-    implementation 'org.springframework.boot:spring-boot-starter'
-    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+
+    testCompileOnly "org.projectlombok:lombok:$lombokVersion"
+    testAnnotationProcessor "org.projectlombok:lombok:$lombokVersion"
+
+    // Cucumber
+    testImplementation "io.cucumber:cucumber-java:$cucumberVersion"
+    testImplementation "io.cucumber:cucumber-junit-platform-engine:$cucumberVersion"
+    testImplementation 'org.junit.platform:junit-platform-suite:1.12.2'
+
+    // RestAssured
+    testImplementation "io.rest-assured:rest-assured:$assuredVersion"
+    testImplementation "com.fasterxml.jackson.core:jackson-databind:$jacksonVersion"
+    // Jackson для Java 8 date/time
+    testImplementation "com.fasterxml.jackson.datatype:jackson-datatype-jsr310:$jacksonVersion"
+    // Allure
+    testImplementation "io.qameta.allure:allure-cucumber7-jvm:$allureVersion"
+    testImplementation "io.qameta.allure:allure-junit5:$allureVersion"
+    testImplementation "io.qameta.allure:allure-rest-assured:$allureVersion"
+
+    // AssertJ
+    testImplementation 'org.assertj:assertj-core:3.24.0'
+
+    // Logging
+    testImplementation 'ch.qos.logback:logback-classic:1.4.12'
+
+    // JUnit
+    testImplementation "org.junit.jupiter:junit-jupiter:$junitVersion"
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
 
 tasks.named('test') {
+    systemProperty "file.encoding", "UTF-8"
     useJUnitPlatform()
+    systemProperties = [
+            'allure.results.directory': 'build/allure-results'
+    ]
+    finalizedBy 'allureReport'
 }
+
+
