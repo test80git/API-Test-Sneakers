@@ -1,6 +1,7 @@
 package ru.sneakerstore.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -18,6 +19,8 @@ import java.time.LocalDateTime;
 @Builder
 @SuiteDisplayName("Позиция в корзине")
 public class CartItemResponse {
+    @JsonProperty("cartItemId")
+    private Long id;
     private Long productId;
     private String productName;
     private Brand brand;

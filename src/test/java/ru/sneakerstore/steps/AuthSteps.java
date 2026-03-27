@@ -49,4 +49,10 @@ public class AuthSteps {
         ApiClient.setAuthToken(token);
     }
 
+
+    @And("I logout")
+    public void logout() {
+        ApiClient.post("/api/v1/auth/logout", null);
+    }
+
 }

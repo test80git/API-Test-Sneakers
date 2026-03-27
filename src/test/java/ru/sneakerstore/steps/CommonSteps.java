@@ -4,16 +4,14 @@ import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
-import io.cucumber.java.ru.*;
 import io.restassured.RestAssured;
 import io.restassured.filter.log.RequestLoggingFilter;
 import io.restassured.filter.log.ResponseLoggingFilter;
-import io.restassured.response.Response;
-import lombok.Getter;
-import lombok.Setter;
 import org.junit.jupiter.api.BeforeAll;
 import ru.sneakerstore.api.utils.ApiClient;
-import ru.sneakerstore.dto.response.CartResponse;
+
+import java.util.List;
+import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -27,20 +25,22 @@ public class CommonSteps {
 
     @Given("I M Sending A GET Request To {string}")
     public void sendGetRequest(String path) {
-       var response = ApiClient.get(path);
+        var response = ApiClient.get(path);
         ResponseContext.setResponse(response);
     }
 
     @When("I M Sending A GET Request To {string}, Where id = {int}")
     public void sendGetRequestWithId(String pathTemplate, int id) {
         String path = pathTemplate.replace("{id}", String.valueOf(id));
-      var  response = ApiClient.get(path);
+        var response = ApiClient.get(path);
         ResponseContext.setResponse(response);
     }
 
     @Then("RESPONSE STATUS {int}")
     public void statusCode(int statusCode) {
         var response = ResponseContext.getResponse();
+        System.out.println("Response STATUS: " + response.asString());
+        System.out.println("Response STATUS CODE: " + response.statusCode());
         assertThat(response).isNotNull();
         assertThat(response.statusCode()).isEqualTo(statusCode);
     }
@@ -57,8 +57,17 @@ public class CommonSteps {
     public void errorMessage(String expectedMessage) {
         var response = ResponseContext.getResponse();
         assertThat(response).isNotNull();
-        assertThat(response.jsonPath().getString("message")).contains(expectedMessage);
+
+        // Проверяем fieldErrors
+        List<Map<String, Object>> fieldErrors = response.jsonPath().getList("fieldErrors");
+        if (fieldErrors != null && !fieldErrors.isEmpty()) {
+            boolean found = fieldErrors.stream()
+                    .anyMatch(error -> error.get("message").toString().contains(expectedMessage));
+            assertThat(found).isTrue();
+            return;
+        } else assertThat(response.jsonPath().getString("message")).contains(expectedMessage);
     }
+
 
 
 }

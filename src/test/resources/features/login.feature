@@ -12,4 +12,4 @@ Feature: Авторизация
       | username | Andrey88 |
       | password | wrongpass |
     Then RESPONSE STATUS 401
-    And ERROR MESSAGE "Bad credentials"
+    And ERROR MESSAGE "Неверные учетные данные пользователя"

@@ -31,8 +31,10 @@ public class Hooks {
         }
     }
 
+
     // Этот метод будет вызываться из шага с логином
     public void loginAs(String username) {
+        ApiClient.setAuthToken(null);
         String password = "password"; // у всех пользователей одинаковый пароль
 
         System.out.println("LOGIN: Trying to login as " + username);

@@ -32,12 +32,15 @@ public class ApiClient {
     }
 
     public static Response post(String path, Object body) {
-        return RestAssured.given()
+        var request = RestAssured.given()
                 .contentType("application/json")
-                .header("Authorization", authToken != null ? "Bearer " + authToken : "")
-                .body(body)
-                .when()
-                .post(path);
+                .header("Authorization", authToken != null ? "Bearer " + authToken : "");
+
+        if (body != null) {
+            request.body(body);
+        }
+
+        return request.when().post(path);
     }
 
     public static Response get(String path) {
