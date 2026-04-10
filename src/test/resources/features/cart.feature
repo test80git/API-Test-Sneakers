@@ -15,13 +15,13 @@ Feature: Корзина
     And cart contains product 112233445 size 42 with quantity 2
     And cart contains product 112233445 size 42 with name "Кроссовки Nike Air Max 90"
 
-  Scenario: Успешное добавление товара с Ошибкой специально
+  Scenario: Успешное добавление товара
     Given I added an item to my cart
       | productId | sizeRu | quantity |
       | 112233445 | 43     | 3        |
     Then RESPONSE STATUS 200
     And cart contains product 112233445 size 43 with quantity 3
-    And cart contains product 112233445 size 43 with name "Кроссовки Nike Air Max"
+    And cart contains product 112233445 size 43 with name "Кроссовки Nike Air Max 90"
 
   Scenario: Добавление несуществующего товара
     Given I added an item to my cart
